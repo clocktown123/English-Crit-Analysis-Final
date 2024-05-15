@@ -18,6 +18,7 @@ parked4 = pygame.image.load('parked_car4.png')
 parked5 = pygame.image.load('parked_car5.png')
 floor = pygame.image.load('Movie_Floor4.png')
 pc = pygame.image.load('pc.png')
+edge = pygame.image.load('screen_boarder.png')
 
 
 def MapF (screen, map):
@@ -57,5 +58,7 @@ def MapF (screen, map):
                          screen.blit(parked5, (j*50, i*50), (0,0,50,50))
                     if map[i][j] == 17:
                          screen.blit(pc, (j*50, i*50), (0,0,50,50))
+                    if map[i][j] == 18:
+                         screen.blit(edge, (j*50, i*50), (0,0,50,50))     
                     if map[i][j] == 0:
                          screen.blit(floor, (j*50, i*50), (0,0,50,50))
