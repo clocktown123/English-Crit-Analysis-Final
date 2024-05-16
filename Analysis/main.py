@@ -59,6 +59,15 @@ Green = False
 Yellow = False
 Red = False
 
+userText = ''
+
+input_rect = pygame.Rect(225, 250, 100, 50)
+Color_active = pygame.Color('lightskyblue3')
+Color_passive = pygame.Color('grey15')
+Color = Color_passive
+
+active = False
+
 def pls(counter):
     if mousePos[0] > 300 and mousePos[0] < 347 and mousePos[1] > 270 and mousePos[1] < 345 and mouseDown == True:
         counter += 1
@@ -161,6 +170,8 @@ text2 = my_font.render(str(int(Money)), 1, (0, 0, 0))
 pc = pygame.image.load('pc.png') #load your spritesheet
 pc.set_colorkey((255, 0, 255))
 
+
+
 def draw_text(text, font, text_col, tx, ty):
     img = font.render(text, True, text_col)
     screen.blit(img, (tx, ty))
@@ -235,12 +246,23 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
             mouseDown = False
         
         #keyboard input (more needed for actual game)
-        if event.type == pygame.KEYDOWN: 
-            if event.key == pygame.K_q:
-                quitGame = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_q:
-                quitGame = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if input_rect.collidepoint(event.pos):
+                active = True
+            else:
+                active = False
+
+        if event.type == pygame.KEYDOWN:
+            if active == True:
+                if event.key == pygame.K_BACKSPACE:
+                    userText = userText[:-1]
+                else:
+                    userText += event.unicode 
+            #if event.key == pygame.K_q:
+                #quitGame = True
+        #if event.type == pygame.KEYUP:
+            #if event.key == pygame.K_q:
+                #quitGame = False
     #physics section-------------------------------------------------------
 
     if mapNum == 1:
@@ -313,6 +335,22 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
             Money -= 100
             button6 = True
             movie1 = True
+    
+    if userText.isdigit():
+        int_data = int(userText)
+        #if int_data > 2:
+            #print("test")
+    else:
+        print("The string cannot be converted to an integer.")
+    
+    #if userText > 10:
+        #print("test")
+    
+    #print(int_data)
+    
+    
+    
+
     
 
    
@@ -437,14 +475,23 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
         if mapNum == 4:
             MapF(screen, map4)
 
+            if active == True:
+                Color = Color_active
+            else:
+                Color = Color_passive
+
             pygame.draw.rect(screen, (200, 20, 20), (70, 70, 100, 50))
             draw_text("X", text_font, (0,0,0), 110, 75,)
             pygame.draw.rect(screen, (186, 85, 211), (200, 200, 250, 150) )
             draw_text("FNAF ticket price:", text_font, (0,0,0), 225, 200,)
             draw_text("Average price: $11", text_font2, (0,0,0), 225, 300,)
 
+            pygame.draw.rect(screen,Color,input_rect, 2)
+            text_surface = text_font.render(userText, True, (255, 255, 255))
+            screen.blit(text_surface, (input_rect.x +5, input_rect.y + 5))
 
-        
+            input_rect.w = max(100,text_surface.get_width() + 10)
+
 
         
 
