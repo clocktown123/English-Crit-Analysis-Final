@@ -3,6 +3,7 @@ from pygame import mixer
 import random
 from player import player
 from map import MapF
+from customer import Enemy
 
 mixer.init()
 pygame.init()
@@ -11,6 +12,7 @@ screen = pygame.display.set_mode((1000,1000))
 clock = pygame.time.Clock()
 
 p1 = player()
+C = Enemy()
 
 A = 0
 D = 1
@@ -53,13 +55,19 @@ mapNum = 1
 
 Counter = 0
 
-Money = 150
+money = 150
+
+More = False
+Average = True
+Low = False
 
 Green = False
 Yellow = False
 Red = False
 
 userText = ''
+
+#change = type(int(userText))
 
 input_rect = pygame.Rect(225, 250, 100, 50)
 Color_active = pygame.Color('lightskyblue3')
@@ -164,8 +172,8 @@ text_font2 = pygame.font.SysFont("Sans", 24, bold = True)
 text_font3 = pygame.font.SysFont("Sans", 22, bold = True)
 
 my_font = pygame.font.SysFont('Comic Sans MS', 40)
-text_surface = my_font.render('Money:', False, (0, 0, 0))
-text2 = my_font.render(str(int(Money)), 1, (0, 0, 0))
+text_surface1 = my_font.render('Money:', False, (0, 0, 0))
+text2 = my_font.render(str(int(money)), 1, (0, 0, 0))
 
 pc = pygame.image.load('pc.png') #load your spritesheet
 pc.set_colorkey((255, 0, 255))
@@ -175,6 +183,9 @@ pc.set_colorkey((255, 0, 255))
 def draw_text(text, font, text_col, tx, ty):
     img = font.render(text, True, text_col)
     screen.blit(img, (tx, ty))
+
+#def add_money(money, int_data):
+    #money += int_data
 
 while 1 and p1.HP > 0: #GAME LOOP######################################################
     clock.tick(60) # fps
@@ -267,13 +278,14 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
 
     if mapNum == 1:
         p1.move(keys, map)
+        C.move(map, ticket)
     #elif mapNum == 2:
         #p1.move(keys , map2)
     #elif mapNum == 3:
         #p1.move(keys , map3)
     
         
-    print(mousePos[0], mousePos[1])
+    #print(mousePos[0], mousePos[1])
        
 
      #ANIMATION-------------------------------------------------------------------
@@ -332,26 +344,38 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
     
     if movie1 == False:
         if mapNum == 3 and mousePos[0]>200 and mousePos[0]<300 and mousePos[1]>200 and mousePos[1]<250 and mouseDown == True:
-            Money -= 100
+            money -= 100
             button6 = True
             movie1 = True
     
     if userText.isdigit():
         int_data = int(userText)
-        #if int_data > 2:
-            #print("test")
+        if int_data > 11:
+            More = True
+            Low = False
+            Average = False
+        elif int_data < 11:
+            Low = True
+            More = False
+            Average = False
+        elif int_data == 11:
+            Average = True
+            More = False
+            Low = False
     else:
         print("The string cannot be converted to an integer.")
     
-    #if userText > 10:
-        #print("test")
-    
-    #print(int_data)
-    
-    
     
 
+    if mapNum == 1 and mousePos[0] > C.pos.x and mousePos[0] < C.pos.x + 30 and mousePos[1] > C.pos.y and mousePos[1] < C.pos.y + 30 and mouseDown == True:
+        ticket = True
     
+    if ticket == True and C.pos.x > 662 and C.pos.x < 713 and C.pos.y < 122:
+        C.isAlive = False
+        money += int_data
+        ticket = False
+
+    C.spawn(ticker, More, Average, Low)
 
    
     #render section-----------------------------------------------------------
@@ -419,8 +443,8 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
         if mapNum == 1:
             MapF(screen, map)
             
-            screen.blit(text_surface, (0,-10))
-            text2 = my_font.render(str(int(Money)), 1, (0, 0, 0))
+            screen.blit(text_surface1, (0,-10))
+            text2 = my_font.render(str(int(money)), 1, (0, 0, 0))
             screen.blit(text2, (150, -10))
 
             screen.blit(pc, (50, 150, 200, 200))
@@ -434,6 +458,10 @@ while 1 and p1.HP > 0: #GAME LOOP###############################################
 
 
             p1.draw(screen)
+
+            if movie1 == True and C.isAlive == True:
+                C.draw(screen)
+
 
         
         #if mapNum == 2:
